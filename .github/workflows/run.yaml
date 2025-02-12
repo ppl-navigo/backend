@@ -1,5 +1,10 @@
-name: remote ssh command
-on: [push]
+name: Release
+on:
+  workflow_run:
+    workflows: ["Building & Pushing Docker Image"]
+    branches: [master]
+    types: 
+      - completed
 jobs:
   build:
     name: Build
@@ -8,10 +13,10 @@ jobs:
       - name: ssh proxy command
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:latest
