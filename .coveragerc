@@ -8,10 +8,10 @@ output = coverage.xml
 concurrency = multiprocessing
 parallel = true
 sigterm = true
-omit = tests/*
+omit = *test*
 
 [report]
 exclude_lines = 
     if __name__ == .__main__.:
     return
-omit = tests/*
+omit = *test*
