@@ -3,7 +3,8 @@ name: Running Test & Code Analysis
 on:
   push:
     branches:
-      - '**'
+      - '!master'
+      - '!staging'
   pull_request:
     types: [opened, synchronize, reopened]
 
