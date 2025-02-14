@@ -1,12 +1,9 @@
 name: Deploying to Staging
 
 on:
-  workflow_run:
-    workflows: ["Running Test & Code Analysis"]
+  push:
     branches:
       - staging
-    types: 
-      - completed
 
 jobs:
   build-and-deploy:
@@ -29,7 +26,7 @@ jobs:
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
-        
+
       - uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
