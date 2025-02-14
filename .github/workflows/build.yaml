@@ -1,8 +1,11 @@
-name: Building & Pushing Docker Image
+name: Deploying to Production
 
 on:
-  push:
+ workflow_run:
+    workflows: ["Running Test & Code Analysis"]
     branches: [master]
+    types: 
+      - completed
 
 jobs:
   build-and-deploy:
@@ -23,3 +26,15 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:latest
+
+      - name: Releasing New Version
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:latest
+            docker compose up -d
