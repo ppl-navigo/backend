@@ -1,8 +1,11 @@
 name: Deploying to Production
 
 on:
-  push:
+ workflow_run:
+    workflows: ["Running Test & Code Analysis"]
     branches: [master]
+    types: 
+      - completed
 
 jobs:
   build-and-deploy:
