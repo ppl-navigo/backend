@@ -1,9 +1,10 @@
 name: Deploying to Staging
 
 on:
- workflow_run:
+  workflow_run:
     workflows: ["Running Test & Code Analysis"]
-    branches: [staging]
+    branches:
+      - staging
     types: 
       - completed
 
