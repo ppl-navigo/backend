@@ -22,6 +22,18 @@ def mock_pdf_no_text():
     mock_pdf.pages = [mock_page]
     return mock_pdf
 
+@pytest.fixture
+def mock_pdf_multi_page():
+    """Mock multi-page PDF with different page texts."""
+    mock_pdf = MagicMock()
+    mock_pdf.__enter__.return_value = mock_pdf
+    mock_page_1 = MagicMock()
+    mock_page_1.extract_text.return_value = "Page 1 content"
+    mock_page_2 = MagicMock()
+    mock_page_2.extract_text.return_value = "Page 2 content"
+    mock_pdf.pages = [mock_page_1, mock_page_2]
+    return mock_pdf
+
 def test_extract_text_pdf_with_text(mock_pdf_with_text):
     """Test PDF with extractable text."""
     with patch("pdfplumber.open", return_value=mock_pdf_with_text):
@@ -44,3 +56,10 @@ def test_extract_text_pdf_corrupted_file():
     with patch("pdfplumber.open", side_effect=Exception("Corrupted file")):
         with pytest.raises(Exception, match="Corrupted file"):
             extract_text_pdf("corrupted.pdf")
+
+def test_extract_text_pdf_multi_page(mock_pdf_multi_page):
+    """✅ Test PDF with multiple pages."""
+    with patch("pdfplumber.open", return_value=mock_pdf_multi_page):
+        extracted_text = extract_text_pdf("dummy.pdf")
+        expected_text = "Page 1 content\nPage 2 content"
+        assert extracted_text == expected_text, f"Unexpected output: {extracted_text}"
