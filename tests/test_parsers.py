@@ -145,3 +145,66 @@ def test_extract_text_docx_corrupted_file():
         with pytest.raises(Exception, match="Corrupted DOCX file"):
             parser.extract_text("corrupted.docx")
 
+# ==========================
+# Tests for PDF Error Handling
+# ==========================
+
+def test_extract_text_pdf_file_not_found():
+    """✅ Test handling of missing PDF file (FileNotFoundError)."""
+    with patch("pdfplumber.open", side_effect=FileNotFoundError("File not found")):
+        parser = PDFParser()
+        with pytest.raises(FileNotFoundError, match="❌ File PDF tidak ditemukan: File not found"):
+            parser.extract_text("missing.pdf")
+
+def test_extract_text_pdf_io_error():
+    """✅ Test handling of PDF file access issues (IOError)."""
+    with patch("pdfplumber.open", side_effect=IOError("File access error")):
+        parser = PDFParser()
+        with pytest.raises(IOError, match="❌ Kesalahan akses file PDF: File access error"):
+            parser.extract_text("locked.pdf")
+
+def test_extract_text_pdf_invalid_file():
+    """✅ Test handling of invalid/corrupt PDF file (ValueError)."""
+    with patch("pdfplumber.open", side_effect=ValueError("Invalid PDF format")):
+        parser = PDFParser()
+        with pytest.raises(ValueError, match="❌ PDF rusak atau tidak dapat diproses: Invalid PDF format"):
+            parser.extract_text("corrupt.pdf")
+
+def test_extract_text_pdf_general_exception():
+    """✅ Test handling of unexpected errors in PDF parsing."""
+    with patch("pdfplumber.open", side_effect=Exception("Unexpected error")):
+        parser = PDFParser()
+        with pytest.raises(RuntimeError, match="❌ Terjadi kesalahan saat memproses PDF: Unexpected error"):
+            parser.extract_text("error.pdf")
+
+# ==========================
+# Tests for DOCX Error Handling
+# ==========================
+
+def test_extract_text_docx_file_not_found():
+    """✅ Test handling of missing DOCX file (FileNotFoundError)."""
+    with patch("docx.Document", side_effect=FileNotFoundError("File not found")):
+        parser = DOCXParser()
+        with pytest.raises(FileNotFoundError, match="❌ File DOCX tidak ditemukan: File not found"):
+            parser.extract_text("missing.docx")
+
+def test_extract_text_docx_io_error():
+    """✅ Test handling of DOCX file access issues (IOError)."""
+    with patch("docx.Document", side_effect=IOError("File access error")):
+        parser = DOCXParser()
+        with pytest.raises(IOError, match="❌ Kesalahan akses file DOCX: File access error"):
+            parser.extract_text("locked.docx")
+
+def test_extract_text_docx_invalid_file():
+    """✅ Test handling of invalid DOCX file (ValueError)."""
+    with patch("docx.Document", side_effect=ValueError("Invalid DOCX format")):
+        parser = DOCXParser()
+        with pytest.raises(ValueError, match="❌ File DOCX tidak valid: Invalid DOCX format"):
+            parser.extract_text("invalid.docx")
+
+def test_extract_text_docx_general_exception():
+    """✅ Test handling of unexpected errors in DOCX parsing."""
+    with patch("docx.Document", side_effect=Exception("Unexpected error")):
+        parser = DOCXParser()
+        with pytest.raises(RuntimeError, match="❌ Terjadi kesalahan saat memproses DOCX: Unexpected error"):
+            parser.extract_text("error.docx")
