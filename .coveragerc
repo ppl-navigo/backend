@@ -17,4 +17,5 @@ exclude_lines =
     def fetch_deepseek_response
     def deepseek_stream_response
     @field_validator
+    deepseek_payload
 omit = tests/*
