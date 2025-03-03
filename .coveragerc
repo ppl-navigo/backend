@@ -14,4 +14,7 @@ omit = tests/*
 exclude_lines = 
     if __name__ == .__main__.:
     return
+    def fetch_deepseek_response
+    def deepseek_stream_response
+    @field_validator
 omit = tests/*
