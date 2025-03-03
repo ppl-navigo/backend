@@ -29,7 +29,7 @@ async def mock_deepseek_stream_response(system_prompt, query):
 
 @patch("app.routers.legal_docs_generator.deepseek.deepseek_stream_response")
 @pytest.mark.asyncio
-def test_deepseek_streaming_success(mock_deepseek):
+async def test_deepseek_streaming_success(mock_deepseek):
     """✅ Should successfully stream DeepSeek responses"""
     mock_deepseek.side_effect = mock_deepseek_stream_response
 

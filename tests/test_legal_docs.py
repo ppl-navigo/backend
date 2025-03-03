@@ -132,7 +132,7 @@ async def test_generate_legal_doc_empty_fields(mock_deepseek):
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
 @pytest.mark.asyncio
-def test_generate_legal_doc_missing_judul(mock_deepseek):
+async def test_generate_legal_doc_missing_judul(mock_deepseek):
     """❌ Should fail when 'judul' field is missing"""
     mock_deepseek.side_effect = mock_deepseek_stream_response
 
