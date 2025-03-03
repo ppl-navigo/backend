@@ -1,5 +1,6 @@
 import pytest
 import logging
+from unittest.mock import patch
 from app.utils.risk_parser import RiskParser
 
 logger = logging.getLogger(__name__)
@@ -111,3 +112,20 @@ def test_parse_ai_risk_analysis_logging(caplog):
     # Now standard logging messages are captured by caplog
     assert any("Parsing AI risk analysis response" in r.message for r in caplog.records), "No parsing log found"
     assert any("Successfully parsed AI risk analysis" in r.message for r in caplog.records), "No success log found"
+
+def test_parse_ai_risk_analysis_unexpected_error(caplog):
+    """❌ Test handling of unexpected errors in AI response parsing."""
+    ai_response = 'Klausul 1: "Tes klausul." Alasan: "Tes alasan."'
+
+    # Simulate an unexpected exception inside the `try` block
+    with patch("re.findall", side_effect=Exception("Unexpected regex error")):
+        with caplog.at_level(logging.ERROR):
+            parsed_data = RiskParser.parse_ai_risk_analysis(ai_response)
+
+    # Verify the error is logged
+    assert any("Error while parsing AI risk analysis: Unexpected regex error" in r.message for r in caplog.records), "Expected error log not found"
+
+    # Verify fallback response
+    assert parsed_data[0]["clause"] == "N/A"
+    assert parsed_data[0]["risky_text"] == "Parsing gagal"
+    assert parsed_data[0]["reason"] == "Kesalahan sistem saat mengolah dokumen"
