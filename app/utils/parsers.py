@@ -17,11 +17,11 @@ class PDFParser(DocumentParser):
                 extracted_text_list = [page.extract_text() for page in pdf.pages if page.extract_text()]
                 extracted_text = "\n".join(extracted_text_list)
                 return extracted_text.strip() if extracted_text.strip() else "❌ Gagal mengekstrak teks atau dokumen kosong."
-        except pdfplumber.PDFSyntaxError as e:
-            raise ValueError(f"❌ PDF rusak atau tidak dapat diproses: {str(e)}") from e
         except FileNotFoundError as e:
             raise FileNotFoundError(f"❌ File PDF tidak ditemukan: {str(e)}") from e
-        except IOError as e:
+        except ValueError as e:  # Catch possible corrupted file issues
+            raise ValueError(f"❌ PDF rusak atau tidak dapat diproses: {str(e)}") from e
+        except IOError as e:  # Catch I/O errors
             raise IOError(f"❌ Kesalahan akses file PDF: {str(e)}") from e
         except Exception as e:
             raise RuntimeError(f"❌ Terjadi kesalahan saat memproses PDF: {str(e)}") from e
