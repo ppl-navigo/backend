@@ -2,16 +2,16 @@ import os
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException
 from app.utils.pdf_parser import extract_text_pdf
 import traceback
+import logging
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"  # Folder to store uploaded files
 MAX_FILE_SIZE = 10 * 1024 * 1024  # Max file size = 10MB
 
-# Ensure upload directory exists
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 @router.post("/upload/")
 async def upload_document(file: UploadFile = File(...), prompt: str = Form(...)):
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
     
