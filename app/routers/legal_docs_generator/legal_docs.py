@@ -21,8 +21,9 @@ async def fetch_deepseek_response(request_data):
 async def generate_legal_document(data: LegalDocumentFormRequest):
     """Process user input and send request to DeepSeek"""
 
+    # SURUH GENERATE MD
     deepseek_payload = {
-        "system_prompt": f"Generate a legal document titled '{data.judul}' for {', '.join(data.pihak)}",
+        "system_prompt": f"Generate a legal document titled '{data.judul}' for {', '.join([x.nama for x in data.pihak])}",
         "query": data.tujuan
     }
 
