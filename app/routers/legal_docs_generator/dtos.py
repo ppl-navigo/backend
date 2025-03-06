@@ -17,14 +17,18 @@ class DeepSeekRequest(BaseModel):
         if value < 0 or value > 1:
             raise ValueError("Temperature value is not a valid float, must be between 0 and 1")
 
+class PihakDetail(BaseModel):
+    nama: str = Field(..., description="Nama pihak")
+    hak_pihak: List[str] = Field(..., description="Hak pihak terkait")
+    kewajiban_pihak: List[str] = Field(..., description="Kewajiban pihak terkait")
+
 class LegalDocumentFormRequest(BaseModel):
+    jenis_kontrak: str = Field(..., description="MOU, Agreement, NDA, or other legal document")
     judul: str = Field(..., description="Judul is required and cannot be empty")
     tujuan: str = Field(..., description="Tujuan is required and cannot be empty")
-    pihak: List[str] = Field(..., description="At least one pihak is required")
+    pihak: List[PihakDetail] = Field(..., description="At least one pihak is required")
     mulai_kerja_sama: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="Must be in YYYY-MM-DD format")
     akhir_kerja_sama: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="Must be in YYYY-MM-DD format")
-    hak_pihak: List[str] = Field(..., description="At least one hak_pihak is required")
-    kewajiban_pihak: List[str] = Field(..., description="At least one kewajiban_pihak is required")
     pemecah_masalah: str = Field(..., description="Pemecah masalah is required and cannot be empty")
     comment: Optional[str] = None
     author: EmailStr = Field(..., description="Must be a valid email address")

@@ -33,24 +33,36 @@ async def test_streaming_legal_document_success(mock_deepseek):
     # mock_deepseek.stop()
 
     document_data = {
-        "judul": "MoU Perusahaan A & B",
-        "tujuan": "Kerja Sama Proyek AI",
-        "pihak": ["Perusahaan A", "Perusahaan B"],
-        "mulai_kerja_sama": "2025-01-01",
-        "akhir_kerja_sama": "2026-01-01",
-        "hak_pihak": ["Hak akses data", "Hak eksklusif teknologi"],
-        "kewajiban_pihak": ["Membayar biaya proyek", "Menyediakan server"],
-        "pemecah_masalah": "Pengadilan Negeri Jakarta",
-        "author": "user@example.com"
+        "jenis_kontrak": "Perjanjian Kerjasama",
+        "judul": "Kontrak Kemitraan Strategis",
+        "tujuan": "Menjalin kemitraan strategis antara dua perusahaan",
+        "pihak": [
+            {
+                "nama": "PT ABC",
+                "hak_pihak": ["Menggunakan teknologi eksklusif", "Menerima laporan keuangan"],
+                "kewajiban_pihak": ["Membayar biaya lisensi", "Memberikan dukungan teknis"]
+            },
+            {
+                "nama": "PT XYZ",
+                "hak_pihak": ["Menerima pembayaran royalti", "Mengakses laporan tahunan"],
+                "kewajiban_pihak": ["Menyediakan akses teknologi", "Memberikan pelatihan kepada tim"]
+            }
+        ],
+        "mulai_kerja_sama": "2025-04-01",
+        "akhir_kerja_sama": "2028-04-01",
+        "pemecah_masalah": "Arbitrase Internasional",
+        "comment": "Kesepakatan perlu direvisi setiap tahun",
+        "author": "email@example.com"
     }
 
     with client.stream("POST", f"{ROUTE}/generate", json=document_data) as response:
-        assert response.status_code == 200  
+        assert response.status_code == 200
 
         chunks = []
         for chunk in response.iter_text():
             chunks.append(chunk)
             assert len(chunk) > 0, chunks  # Ensure token-by-token output
+
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
 @pytest.mark.asyncio
@@ -59,19 +71,29 @@ async def test_submit_legal_document_success(mock_deepseek):
     mock_deepseek.side_effect = mock_deepseek_stream_response
 
     document_data = {
-        "judul": "MoU Perusahaan A & B",
-        "tujuan": "Kerja Sama Proyek AI",
-        "pihak": ["Perusahaan A", "Perusahaan B"],
-        "mulai_kerja_sama": "2025-01-01",
-        "akhir_kerja_sama": "2026-01-01",
-        "hak_pihak": ["Hak akses data", "Hak eksklusif teknologi"],
-        "kewajiban_pihak": ["Membayar biaya proyek", "Menyediakan server"],
-        "pemecah_masalah": "Pengadilan Negeri Jakarta",
-        "author": "user@example.com"
+        "jenis_kontrak": "Perjanjian Kerjasama",
+        "judul": "Kontrak Kemitraan Strategis",
+        "tujuan": "Menjalin kemitraan strategis antara dua perusahaan",
+        "pihak": [
+            {
+                "nama": "PT ABC",
+                "hak_pihak": ["Menggunakan teknologi eksklusif", "Menerima laporan keuangan"],
+                "kewajiban_pihak": ["Membayar biaya lisensi", "Memberikan dukungan teknis"]
+            },
+            {
+                "nama": "PT XYZ",
+                "hak_pihak": ["Menerima pembayaran royalti", "Mengakses laporan tahunan"],
+                "kewajiban_pihak": ["Menyediakan akses teknologi", "Memberikan pelatihan kepada tim"]
+            }
+        ],
+        "mulai_kerja_sama": "2025-04-01",
+        "akhir_kerja_sama": "2028-04-01",
+        "pemecah_masalah": "Arbitrase Internasional",
+        "author": "email@example.com"  # without comment parameter should be fine
     }
     response = client.post(f"{ROUTE}/generate", json=document_data)
 
-    assert response.status_code == 200  
+    assert response.status_code == 200
     assert len(response.text) > 0  # Ensure generated document is not empty
 
 
@@ -82,20 +104,32 @@ async def test_submit_legal_document_invalid_email(mock_deepseek):
     mock_deepseek.side_effect = mock_deepseek_stream_response
 
     document_data = {
-        "judul": "MoU Invalid",
-        "tujuan": "Test",
-        "pihak": ["Company A"],
-        "mulai_kerja_sama": "2025-01-01",
-        "akhir_kerja_sama": "2026-01-01",
-        "hak_pihak": ["Right A"],
-        "kewajiban_pihak": ["Obligation A"],
-        "pemecah_masalah": "Court A",
-        "author": "invalid-email"
+        "jenis_kontrak": "Perjanjian Kerjasama",
+        "judul": "Kontrak Kemitraan Strategis",
+        "tujuan": "Menjalin kemitraan strategis antara dua perusahaan",
+        "pihak": [
+            {
+                "nama": "PT ABC",
+                "hak_pihak": ["Menggunakan teknologi eksklusif", "Menerima laporan keuangan"],
+                "kewajiban_pihak": ["Membayar biaya lisensi", "Memberikan dukungan teknis"]
+            },
+            {
+                "nama": "PT XYZ",
+                "hak_pihak": ["Menerima pembayaran royalti", "Mengakses laporan tahunan"],
+                "kewajiban_pihak": ["Menyediakan akses teknologi", "Memberikan pelatihan kepada tim"]
+            }
+        ],
+        "mulai_kerja_sama": "2025-04-01",
+        "akhir_kerja_sama": "2028-04-01",
+        "pemecah_masalah": "Arbitrase Internasional",
+        "comment": "",
+        "author": "invalid_email"
     }
     response = client.post(f"{ROUTE}/generate", json=document_data)
 
-    assert response.status_code == 422  
-    assert "value is not a valid email" in response.text # failed case, unprocessable entity
+    assert response.status_code == 422
+    # failed case, unprocessable entity
+    assert "value is not a valid email" in response.text
 
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
@@ -103,11 +137,13 @@ async def test_submit_legal_document_invalid_email(mock_deepseek):
 async def test_submit_legal_document_missing_fields(mock_deepseek):
     """❌ Should fail due to missing fields"""
     mock_deepseek.side_effect = mock_deepseek_stream_response
-    
+
     response = client.post(f"{ROUTE}/generate", json={})
 
-    assert response.status_code == 422  
-    assert "field required" in response.text.lower() # failed case, unprocessable entity
+    assert response.status_code == 422
+    # failed case, unprocessable entity
+    assert "field required" in response.text.lower()
+
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
 @pytest.mark.asyncio
@@ -116,19 +152,20 @@ async def test_generate_legal_doc_empty_fields(mock_deepseek):
     mock_deepseek.side_effect = mock_deepseek_stream_response
 
     document_data = {
+        "jenis_kontrak": "",
         "judul": "",
         "tujuan": "",
         "pihak": [],
         "mulai_kerja_sama": "",
         "akhir_kerja_sama": "",
-        "hak_pihak": [],
-        "kewajiban_pihak": [],
         "pemecah_masalah": "",
-        "author": "user@example.com"
+        "comment": "",
+        "author": ""
     }
     response = client.post(f"{ROUTE}/generate", json=document_data)
 
-    assert response.status_code == 422 # corner case, unprocessable entity
+    assert response.status_code == 422  # corner case, unprocessable entity
+
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
 @pytest.mark.asyncio
@@ -137,18 +174,29 @@ async def test_generate_legal_doc_missing_judul(mock_deepseek):
     mock_deepseek.side_effect = mock_deepseek_stream_response
 
     document_data = {
-        # "judul": "", # Field is missing
-        "tujuan": "Test", 
-        "pihak": ["Company A"],  
-        "mulai_kerja_sama": "2025-01-01",
-        "akhir_kerja_sama": "2026-01-01",
-        "hak_pihak": ["Right A"],
-        "kewajiban_pihak": ["Obligation A"],
-        "pemecah_masalah": "Court A",
-        "comment": "Check contract validity",
-        "author": "user@example.com"
+        "jenis_kontrak": "Perjanjian Kerjasama",
+        # "judul": "Kontrak Kemitraan Strategis", # missing judul
+        "tujuan": "Menjalin kemitraan strategis antara dua perusahaan",
+        "pihak": [
+            {
+                "nama": "PT ABC",
+                "hak_pihak": ["Menggunakan teknologi eksklusif", "Menerima laporan keuangan"],
+                "kewajiban_pihak": ["Membayar biaya lisensi", "Memberikan dukungan teknis"]
+            },
+            {
+                "nama": "PT XYZ",
+                "hak_pihak": ["Menerima pembayaran royalti", "Mengakses laporan tahunan"],
+                "kewajiban_pihak": ["Menyediakan akses teknologi", "Memberikan pelatihan kepada tim"]
+            }
+        ],
+        "mulai_kerja_sama": "2025-04-01",
+        "akhir_kerja_sama": "2028-04-01",
+        "pemecah_masalah": "Arbitrase Internasional",
+        "comment": "Kesepakatan perlu direvisi setiap tahun",
+        "author": "email@example.com"
     }
     response = client.post(f"{ROUTE}/generate", json=document_data)
 
     assert response.status_code == 422
-    assert "field" in response.text.lower() and "required" in response.text.lower()  # failed case, bad request
+    assert "field" in response.text.lower(
+    ) and "required" in response.text.lower()  # failed case, bad request
