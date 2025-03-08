@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class RiskParser:
     """Handles AI-generated risk analysis parsing with robust error handling and logging."""
 
-    RISK_PATTERN = r"Klausul\s+([\w\s()]+):\s*['\"](.*?)['\"]\s*\.?\s*Alasan:\s*['\"](.*?)['\"]"
+    RISK_PATTERN = r"Klausul\s+([\w\s()]+):\s*['\"]?(.*?)['\"]?\s*\.?\s*Alasan:\s*['\"]?(.*?)['\"]?(?:\n|$)"
 
     @staticmethod
     def parse_ai_risk_analysis(ai_response: str) -> List[Dict[str, str]]:
