@@ -137,3 +137,47 @@ def test_risk_parser_called_with_ai_response(mock_risk_parser, mock_ai_client, m
     
     mock_risk_parser.assert_called_once_with(ai_response)
     assert response.status_code == 200
+
+# ==========================
+# ✅ Addition
+# ==========================
+
+@patch("app.utils.parsers.ParserFactory.get_parser")
+@patch("app.utils.ai_client.AIClient.analyze_risk")
+@patch("app.utils.risk_parser.RiskParser.parse_ai_risk_analysis")
+@patch("os.remove")  # ✅ Mock file deletion
+def test_analyze_cleanup_on_success(mock_os_remove, mock_risk_parser, mock_ai_client, mock_parser, mock_pdf_file):
+    """✅ Ensures the temporary file is deleted after processing."""
+    mock_parser.return_value.extract_text.return_value = "Valid extracted text"
+    mock_ai_client.return_value = "AI analyzed response"
+    mock_risk_parser.return_value = [{"clause": "Klausul 5", "risky_text": "Example risk", "reason": "Example reason"}]
+
+    response = client.post("/analyze/", files={"file": mock_pdf_file})
+    
+    assert response.status_code == 200
+    mock_os_remove.assert_called_once()  # ✅ Ensure temp file is deleted
+
+@patch("app.utils.parsers.ParserFactory.get_parser")
+@patch("app.utils.ai_client.AIClient.analyze_risk", side_effect=Exception("AI failure"))
+@patch("os.remove")  # ✅ Ensure file deletion
+def test_analyze_cleanup_on_ai_failure(mock_os_remove, mock_ai_client, mock_parser, mock_pdf_file):
+    """✅ Ensures temp file is deleted even if AI processing fails."""
+    mock_parser.return_value.extract_text.return_value = "Valid extracted text"
+
+    response = client.post("/analyze/", files={"file": mock_pdf_file})
+
+    assert response.status_code == 500
+    assert "❌ AI Analysis Failed" in response.json()["detail"]
+    mock_os_remove.assert_called_once()  # ✅ Ensure cleanup runs even on failure
+
+@patch("app.utils.parsers.ParserFactory.get_parser")
+@patch("os.remove")  # ✅ Ensure cleanup happens
+def test_analyze_extraction_failure(mock_os_remove, mock_parser, mock_pdf_file):
+    """❌ Ensure extraction failure results in 500 and file cleanup."""
+    mock_parser.return_value.extract_text.return_value = "❌ Gagal mengekstrak teks atau dokumen kosong."
+
+    response = client.post("/analyze/", files={"file": mock_pdf_file})
+
+    assert response.status_code == 500
+    assert response.json()["detail"] == "❌ Failed to extract text."
+    mock_os_remove.assert_called_once()  # ✅ Cleanup should run even when extraction fails

@@ -7,3 +7,4 @@ env
 coverage.xml
 .env
 assets/
+uploads/
