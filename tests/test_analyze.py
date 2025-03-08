@@ -5,35 +5,42 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 client = TestClient(app)
-UPLOAD_DIR = "uploads"
 
 @pytest.fixture
 def mock_pdf_file(tmp_path):
     """Create a temporary valid PDF file for testing."""
     pdf_path = tmp_path / "test_document.pdf"
     pdf_path.write_bytes(b"%PDF-1.4 Valid PDF content")
-    return open(pdf_path, "rb")
+    file = open(pdf_path, "rb")
+    yield file
+    file.close()
 
 @pytest.fixture
 def mock_docx_file(tmp_path):
     """Create a temporary valid DOCX file for testing."""
     docx_path = tmp_path / "test_document.docx"
     docx_path.write_bytes(b"PK\x03\x04 Valid DOCX content")
-    return open(docx_path, "rb")
+    file = open(docx_path, "rb")
+    yield file
+    file.close()
 
 @pytest.fixture
 def mock_corrupt_pdf(tmp_path):
     """Create a corrupted PDF file."""
     corrupt_pdf_path = tmp_path / "corrupt.pdf"
     corrupt_pdf_path.write_bytes(b"Invalid content")
-    return open(corrupt_pdf_path, "rb")
+    file = open(corrupt_pdf_path, "rb")
+    yield file
+    file.close()
 
 @pytest.fixture
 def mock_unsupported_file(tmp_path):
     """Create an unsupported file format (TXT)."""
     unsupported_path = tmp_path / "test.txt"
     unsupported_path.write_text("This is a text file.")
-    return open(unsupported_path, "rb")
+    file = open(unsupported_path, "rb")
+    yield file
+    file.close()
 
 # ==========================
 # ✅ Success Cases
