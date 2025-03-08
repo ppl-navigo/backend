@@ -6,3 +6,4 @@ env
 .coverage
 coverage.xml
 .env
+assets/
