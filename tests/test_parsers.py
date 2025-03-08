@@ -64,11 +64,14 @@ def test_extract_text_pdf_with_text(mock_pdf_with_text):
         assert extracted_text == "Sample extracted text from PDF", f"Unexpected output: {extracted_text}"
 
 def test_extract_text_pdf_no_text(mock_pdf_no_text):
-    """✅ Test PDF with no extractable text."""
+    """✅ Test PDF with no extractable text should raise ValueError."""
     with patch("pdfplumber.open", return_value=mock_pdf_no_text):
         parser = PDFParser()
-        extracted_text = parser.extract_text("dummy.pdf")
-        assert extracted_text == "❌ Gagal mengekstrak teks atau dokumen kosong."
+        
+        with pytest.raises(ValueError) as exc_info:
+            parser.extract_text("dummy.pdf")
+
+        assert "❌ Failed to extract text from the document." in str(exc_info.value)
 
 def test_extract_text_pdf_multi_page(mock_pdf_multi_page):
     """✅ Test PDF with multiple pages."""

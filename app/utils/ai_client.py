@@ -34,7 +34,7 @@ class AIClient:
             ai_output = response.choices[0].message.content.strip()
 
             # Temporary hardcode karena API sedang error, dan self deployed API in progress
-            ai_output = settings.AI_OUTPUT
+            # ai_output = settings.AI_OUTPUT
 
             return ai_output
         except Exception as e:

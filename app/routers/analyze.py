@@ -14,8 +14,6 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 async def analyze_document(file: UploadFile = File(...)):
     """Handles document analysis request."""
     file_extension = file.filename.split(".")[-1].lower()
-    if file_extension not in ["pdf", "docx"]:
-        raise HTTPException(status_code=400, detail="❌ Only PDF and DOCX files are supported.")
 
     # Save file temporarily
     temp_file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -29,14 +27,7 @@ async def analyze_document(file: UploadFile = File(...)):
     # Cleanup temp file
     os.remove(temp_file_path)
 
-    if "❌" in extracted_text:
-        raise HTTPException(status_code=500, detail="❌ Failed to extract text.")
-
-    # ✅ **Fix: Catch AI Errors**
-    try:
-        ai_response = AIClient.analyze_risk(extracted_text)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"❌ AI Analysis Failed: {str(e)}")
+    ai_response = AIClient.analyze_risk(extracted_text)
 
     parsed_risks = RiskParser.parse_ai_risk_analysis(ai_response)
     return {"risks": parsed_risks}
