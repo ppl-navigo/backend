@@ -6,6 +6,7 @@ from starlette.datastructures import UploadFile
 import io
 import fitz  # PyMuPDF
 from docx import Document
+from unittest.mock import patch
 
 client = TestClient(app)
 
@@ -44,17 +45,22 @@ def mock_unsupported_file(tmp_path):
     yield file
     file.close()
 
-def test_analyze_pdf_no_mocks(mock_valid_pdf):
-    """✅ Ensure full execution of analyze_document with a real PDF."""
-    response = client.post("/analyze/", files={"file": mock_valid_pdf})
-    assert response.status_code == 200
-    assert "risks" in response.json()
+@pytest.mark.asyncio
+async def test_analyze_pdf_no_mocks(mock_valid_pdf):
+    """✅ Ensure full execution of analyze_document with a real PDF, but mock AI."""
+    with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
+        response = client.post("/analyze/", files={"file": mock_valid_pdf})
+        assert response.status_code == 200
+        assert "risks" in response.json()
 
-def test_analyze_docx_no_mocks(mock_valid_docx):
-    """✅ Ensure DOCX files are processed correctly."""
-    response = client.post("/analyze/", files={"file": mock_valid_docx})
-    assert response.status_code == 200
-    assert "risks" in response.json()
+
+@pytest.mark.asyncio
+async def test_analyze_docx_no_mocks(mock_valid_docx):
+    """✅ Ensure DOCX files are processed correctly, but mock AI."""
+    with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
+        response = client.post("/analyze/", files={"file": mock_valid_docx})
+        assert response.status_code == 200
+        assert "risks" in response.json()
 
 @pytest.mark.asyncio
 async def test_direct_call_analyze_document():
