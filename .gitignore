@@ -6,5 +6,6 @@ env
 .coverage
 coverage.xml
 .env
+.venv
 assets/
 uploads/
