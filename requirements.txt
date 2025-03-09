@@ -4,3 +4,5 @@ pytest-cov
 pytest
 pdfplumber==0.11.5
 pymupdf
+google-cloud-storage
+python-multipart
