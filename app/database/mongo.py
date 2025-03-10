@@ -1,6 +1,6 @@
 from config.mongo import documents_collection
 from bson import ObjectId
-from datetime import datetime
+from datetime import datetime, timezone
 
 async def find_document_by_text(filename: str, extracted_text: str):
     """Check if a document with the same filename and extracted text exists."""
@@ -10,7 +10,7 @@ async def insert_new_document(filename: str, extracted_text: str, ai_response: s
     """Insert a new document into MongoDB and return the inserted ID."""
     document_data = {
         "filename": filename,
-        "uploaded_at": datetime.utcnow(),
+        "uploaded_at": datetime.now(timezone.utc),
         "extracted_text": extracted_text,
         "ai_analysis": ai_response,
         "risk_analysis": parsed_risks
