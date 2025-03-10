@@ -60,3 +60,8 @@ jobs:
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:staging
             echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
             docker compose up -d --env-file .env
+
+      - name: Setup GCP Credentials
+        run: |
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}" > $GITHUB_WORKSPACE/GCP_SERVICE_ACCOUNT_JSON
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/GCP_SERVICE_ACCOUNT_JSON" >> $GITHUB_ENV

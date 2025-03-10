@@ -5,6 +5,9 @@ env
 .pytest_cache
 .coverage
 coverage.xml
+.venv
+assets/
+uploads/
 key.json
 .history
 .env

@@ -1,0 +1,33 @@
+import os
+import shutil
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from app.utils.parsers import ParserFactory
+from app.utils.ai_client import AIClient
+from app.utils.risk_parser import RiskParser
+
+router = APIRouter()
+
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@router.post("/analyze/")
+async def analyze_document(file: UploadFile = File(...)):
+    """Handles document analysis request."""
+    file_extension = file.filename.split(".")[-1].lower()
+
+    # Save file temporarily
+    temp_file_path = os.path.join(UPLOAD_DIR, file.filename)
+    with open(temp_file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Extract text
+    parser = ParserFactory.get_parser(file_extension)
+    extracted_text = parser.extract_text(temp_file_path)
+
+    # Cleanup temp file
+    os.remove(temp_file_path)
+
+    ai_response = AIClient.analyze_risk(extracted_text)
+
+    parsed_risks = RiskParser.parse_ai_risk_analysis(ai_response)
+    return {"risks": parsed_risks}

@@ -25,6 +25,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Setup GCP Credentials
+        run: |
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
+      - name: Verify GCP Credentials
+        run: |
+          echo "Checking if key.json exists..."
+          ls -l $GITHUB_WORKSPACE/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS is set to: $GOOGLE_APPLICATION_CREDENTIALS"
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
@@ -32,3 +41,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
