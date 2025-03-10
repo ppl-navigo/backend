@@ -55,3 +55,8 @@ jobs:
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:staging
             docker compose up -d
+
+      - name: Setup GCP Credentials
+        run: |
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}" > $GITHUB_WORKSPACE/GCP_SERVICE_ACCOUNT_JSON
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/GCP_SERVICE_ACCOUNT_JSON" >> $GITHUB_ENV

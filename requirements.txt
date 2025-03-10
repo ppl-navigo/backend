@@ -7,3 +7,5 @@ pdfplumber==0.11.5
 python-docx==1.1.2
 openai==1.65.4
 PyMuPDF
+google-cloud-storage
+python-multipart
