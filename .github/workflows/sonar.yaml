@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
       - name: Setup GCP Credentials
         run: |
-          echo "${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/key.json
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
       - name: Verify GCP Credentials
         run: |
