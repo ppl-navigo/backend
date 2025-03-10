@@ -76,4 +76,4 @@ async def test_direct_call_analyze_document():
 
     with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
         response = await analyze_document(fake_file)
-        assert "detail" in response
+        assert "risk" in response
