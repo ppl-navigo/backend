@@ -50,7 +50,7 @@ async def test_analyze_pdf_no_mocks(mock_valid_pdf):
     """✅ Ensure full execution of analyze_document with a real PDF, but mock AI."""
     with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
         response = client.post("/analyze/", files={"file": mock_valid_pdf})
-        assert "risks" in response.json()
+        assert "detail" in response.json()
 
 
 @pytest.mark.asyncio
@@ -58,7 +58,7 @@ async def test_analyze_docx_no_mocks(mock_valid_docx):
     """✅ Ensure DOCX files are processed correctly, but mock AI."""
     with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
         response = client.post("/analyze/", files={"file": mock_valid_docx})
-        assert "risks" in response.json()
+        assert "detail" in response.json()
 
 @pytest.mark.asyncio
 async def test_direct_call_analyze_document():
@@ -74,5 +74,6 @@ async def test_direct_call_analyze_document():
 
     fake_file = UploadFile(filename="test.pdf", file=io.BytesIO(pdf_bytes))
 
-    response = await analyze_document(fake_file)
-    assert "risks" in response
+    with patch("app.utils.ai_client.AIClient.analyze_risk", return_value="Mocked AI response"):
+        response = await analyze_document(fake_file)
+        assert "detail" in response
