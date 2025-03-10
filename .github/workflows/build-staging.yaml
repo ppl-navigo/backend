@@ -23,6 +23,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Debug Environment Variables
+        run: |
+          echo "MONGO_DB_NAME is set to: $MONGO_DB_NAME"
+        env:
+          MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
+          
+      - name: Set Environment Variables
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
+          echo "MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}" >> $GITHUB_ENV
+
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
