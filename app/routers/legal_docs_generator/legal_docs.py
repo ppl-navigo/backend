@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse
 from app.routers.legal_docs_generator.dtos import LegalDocumentFormRequest
 from app.routers.legal_docs_generator.deepseek import deepseek_stream_response
 import httpx
-import asyncio
+import html
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def fetch_deepseek_response(request_data):
     async with httpx.AsyncClient() as client:
         async with client.stream("POST", DEEPSEEK_API_URL, json=request_data) as response:
             async for chunk in response.aiter_text():
-                yield chunk
+                yield html.escape(chunk)
 
 
 @router.post("/legal-docs-generator/generate", response_class=StreamingResponse)

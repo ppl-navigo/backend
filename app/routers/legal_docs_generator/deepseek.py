@@ -1,6 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from app.routers.legal_docs_generator.dtos import DeepSeekRequest
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from pydantic import ValidationError
 
 import ollama
 from google import genai
@@ -8,6 +11,7 @@ from google.genai import types
 
 import os
 
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 
 async def deepseek_stream_response(system_prompt: str, query: str):
@@ -40,5 +44,13 @@ async def deepseek_stream_response(system_prompt: str, query: str):
     #     yield chunk['message']['content']
 
 @router.post("/deepseek", response_class=StreamingResponse)
-async def deepseek_generate(data: DeepSeekRequest):
-    return StreamingResponse(deepseek_stream_response(data.system_prompt, data.query), media_type="text/plain")
+@limiter.limit("5/minute")
+async def deepseek_generate(request: Request):
+    # HACK: slowapi.limiter only works with Request objects, pydantic validation done manually
+    try:
+        body = await request.json()
+        validated_request = DeepSeekRequest(**body)
+    except ValidationError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+    return StreamingResponse(deepseek_stream_response(validated_request.system_prompt, validated_request.query), media_type="text/plain")

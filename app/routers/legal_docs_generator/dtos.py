@@ -1,3 +1,4 @@
+from fastapi import Request
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List
 
@@ -16,6 +17,14 @@ class DeepSeekRequest(BaseModel):
     def check_temperature(cls, value):
         if value < 0 or value > 1:
             raise ValueError("Temperature value is not a valid float, must be between 0 and 1")
+    
+    @field_validator("system_prompt", "query")
+    def sanitize_inputs(cls, value):
+        if not value.strip():
+            raise ValueError("Field cannot be empty")
+        if len(value) > 500: 
+            raise ValueError("Input too long, maximum 500 characters allowed")
+        return value
 
 class PihakDetail(BaseModel):
     nama: str = Field(..., description="Nama pihak")
@@ -32,3 +41,11 @@ class LegalDocumentFormRequest(BaseModel):
     pemecah_masalah: str = Field(..., description="Pemecah masalah is required and cannot be empty")
     comment: Optional[str] = None
     author: EmailStr = Field(..., description="Must be a valid email address")
+
+    @field_validator("judul", "tujuan", "pemecah_masalah")
+    def sanitize_inputs(cls, value):
+        if not value.strip():
+            raise ValueError("Field cannot be empty")
+        if len(value) > 500: 
+            raise ValueError("Input too long, maximum 500 characters allowed")
+        return value
