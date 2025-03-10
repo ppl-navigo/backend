@@ -14,4 +14,7 @@ class Settings:
     MONGO_URI = os.getenv("MONGO_URI")
     MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
+    if not os.getenv("MONGO_DB_NAME"):
+        os.environ["MONGO_DB_NAME"] = "test_database"
+    
 settings = Settings()
