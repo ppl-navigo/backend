@@ -45,7 +45,7 @@ async def generate_legal_document(data: LegalDocumentFormRequest, request: Reque
     """
 
     deepseek_payload = {
-        "system_prompt": f'''
+        "system_prompt": '''
             BUATLAH MOU (MEMORANDUM OF UNDERSTANDING) ANTAR DUA PIHAK YANG BERBEDA DALAM BENTUK MARKDOWN, 
             DENGAN FORMAT YANG SESUAI DENGAN KEBUTUHAN KEDUA PIHAK.
             TIDAK APA APA JIKA DATA TIDAK LENGKAP, COBA SAJA SEBISANYA
