@@ -22,7 +22,7 @@ class DeepSeekRequest(BaseModel):
     def sanitize_inputs(cls, value):
         if not value.strip():
             raise ValueError("Field cannot be empty")
-        if len(value) > 500: 
+        if len(value) > 1_000: 
             raise ValueError("Input too long, maximum 500 characters allowed")
         return value
 
