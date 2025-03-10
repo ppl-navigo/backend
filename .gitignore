@@ -6,3 +6,5 @@ env
 .coverage
 coverage.xml
 key.json
+.history
+.env
