@@ -23,6 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create .env file
+        run: |
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
@@ -54,7 +58,8 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:staging
-            docker compose up -d
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+            docker compose up -d --env-file .env
 
       - name: Setup GCP Credentials
         run: |
