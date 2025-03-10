@@ -9,3 +9,5 @@ openai==1.65.4
 PyMuPDF
 motor==3.7.0
 pymongo==4.11.2
+pytest-asyncio
+mongomock==4.3.0
