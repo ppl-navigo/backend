@@ -11,10 +11,7 @@ class Settings:
     SITE_URL = os.getenv("SITE_URL", "https://yourwebsite.com")  # Optional ranking
     SITE_NAME = os.getenv("SITE_NAME", "YourApp")  # Optional ranking
     AI_OUTPUT = os.getenv("AI_OUTPUT") # temporary aja sampe API self deployment done
-    MONGO_URI = os.getenv("MONGO_URI")
-    MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
-
-    if not os.getenv("MONGO_DB_NAME"):
-        os.environ["MONGO_DB_NAME"] = "test_database"
+    MONGO_URI= os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    MONGO_DB_NAME= os.getenv("MONGO_DB_NAME", "test_database")  # ✅ Default fallback
     
 settings = Settings()
