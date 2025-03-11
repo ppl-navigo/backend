@@ -4,6 +4,7 @@ from app.routers.legal_docs_generator.dtos import DeepSeekRequest
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from pydantic import ValidationError
+from fastapi.responses import PlainTextResponse
 
 import ollama
 from google import genai
@@ -20,15 +21,16 @@ async def deepseek_stream_response(system_prompt: str, query: str):
     """
     # Gemini API Request
     client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
-    response = client.models.generate_content_stream(
+    response = client.models.generate_content(
         model="gemini-2.0-flash-lite",
         config=types.GenerateContentConfig(
             system_instruction=system_prompt
         ),
         contents=[query]
     )
-    for chunk in response:
-        yield chunk.text
+    return response.text
+    # for chunk in response:
+    #     yield chunk.text
 
  
     # Deepseek Ollama Implementation
@@ -43,7 +45,7 @@ async def deepseek_stream_response(system_prompt: str, query: str):
     # for chunk in stream:
     #     yield chunk['message']['content']
 
-@router.post("/deepseek", response_class=StreamingResponse)
+@router.post("/deepseek", response_class=PlainTextResponse)
 @limiter.limit("5/minute")
 async def deepseek_generate(request: Request):
     # HACK: slowapi.limiter only works with Request objects, pydantic validation done manually
@@ -53,4 +55,7 @@ async def deepseek_generate(request: Request):
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
-    return StreamingResponse(deepseek_stream_response(validated_request.system_prompt, validated_request.query), media_type="text/plain")
+    result = await deepseek_stream_response(validated_request.system_prompt, validated_request.query)
+    return result
+
+    # return StreamingResponse(deepseek_stream_response(validated_request.system_prompt, validated_request.query), media_type="text/plain")
