@@ -29,6 +29,7 @@ app.add_middleware(
     allow_headers=["*"],  # Izinkan semua header
 )
 
+
 @app.get("/")
 async def root():
     return {"message": "MoU Analyzer is running"}
