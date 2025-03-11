@@ -23,7 +23,7 @@ app.include_router(legal_docs.router)
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Bisa juga ["*"] untuk semua origin
+    allow_origins=["*"],  # TODO : Remove this for nonstaging env
     allow_credentials=True,
     allow_methods=["*"],  # Izinkan semua metode (GET, POST, dll.)
     allow_headers=["*"],  # Izinkan semua header
