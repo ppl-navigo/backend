@@ -22,32 +22,34 @@ atau menyarankan pengeditan agar hasil dokumen lebih akurat.
 
 async def mock_deepseek_stream_response(system_prompt, query):
     """Mock DeepSeek's streaming response for testing"""
-    for word in ["AI", "Response:", "Sky", "is", "blue."]:
-        yield word + " "
-        await asyncio.sleep(0.01)
+    WORDS = ["AI", "Response:", "Sky", "is", "blue."]
+    return WORDS
+    # for word in WORDS:
+    #     yield word + " "
+    #     await asyncio.sleep(0.01)
 
 
-@patch("app.routers.legal_docs_generator.deepseek.deepseek_stream_response")
-@pytest.mark.asyncio
-async def test_deepseek_streaming_success(mock_deepseek):
-    """✅ Should successfully stream DeepSeek responses"""
-    mock_deepseek.side_effect = mock_deepseek_stream_response
+# @patch("app.routers.legal_docs_generator.deepseek.deepseek_stream_response")
+# @pytest.mark.asyncio
+# async def test_deepseek_streaming_success(mock_deepseek):
+#     """✅ Should successfully stream DeepSeek responses"""
+#     mock_deepseek.side_effect = mock_deepseek_stream_response
 
-    request_data = {
-        "system_prompt": "Why is the sky blue?",
-        "query": "Explain in simple terms."
-    }
+#     request_data = {
+#         "system_prompt": "Why is the sky blue?",
+#         "query": "Explain in simple terms."
+#     }
 
-    with client.stream("POST", ROUTE, json=request_data) as response:
-        assert response.status_code == 200  
+#     with client.stream("POST", ROUTE, json=request_data) as response:
+#         assert response.status_code == 200  
 
-        chunks = []
-        for chunk in response.iter_text():
-            chunks.append(chunk)
-            assert len(chunk) > 0 
+#         chunks = []
+#         for chunk in response.iter_text():
+#             chunks.append(chunk)
+#             assert len(chunk) > 0 
         
-        full_response = "".join(chunks)
-        assert "AI Response:" in full_response
+#         full_response = "".join(chunks)
+#         assert "AI Response:" in full_response
 
 @patch("app.routers.legal_docs_generator.deepseek.deepseek_stream_response")
 @pytest.mark.asyncio

@@ -20,9 +20,11 @@ mencoba mengunggah kembali dengan format yang sesuai.
 async def mock_deepseek_stream_response(request_data, request):
     """Mocked fetch_deepseek_response"""
     MOCKED_RESPONSE = "<think>\nAlright, I need to help the user create a Memorandum of Understanding (MoU) between Perusahaan A and Perusahaan B focused on their collaboration for an AI project. First, I should recall what an MoU typically includes.\n\nAn MoU is usually not legally binding but outlines the intention and terms"
-    for word in MOCKED_RESPONSE.split():
-        yield word + " "
-        await asyncio.sleep(0.01)  # Simulate streaming delay
+
+    return MOCKED_RESPONSE
+    # for word in MOCKED_RESPONSE.split():
+    #     yield word + " "
+    #     await asyncio.sleep(0.01)  # Simulate streaming delay
 
 
 @patch("app.routers.legal_docs_generator.legal_docs.fetch_deepseek_response")
