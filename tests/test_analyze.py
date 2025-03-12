@@ -45,6 +45,17 @@ def mock_unsupported_file(tmp_path):
     yield file
     file.close()
 
+@pytest.fixture
+def sample_ai_response():
+    """Mock AI response with multiple risk clauses."""
+    return '''
+    Klausul 2: "Jasa dari PIHAK PERTAMA kepada PIHAK KEDUA dimulai sejak PIHAK KEDUA melakukan PEMBAYARAN."
+    Alasan: "Tidak ada perlindungan bagi PIHAK KEDUA terhadap keterlambatan PIHAK PERTAMA."
+
+    Klausul 6: "Tahap pertama sebagai uang muka sebesar Rp. ______________ akan dibayarkan oleh PIHAK KEDUA."
+    Alasan: "Tidak ada jaminan bahwa PIHAK PERTAMA akan menyelesaikan pekerjaan sesuai standar."
+    '''
+
 @pytest.mark.asyncio
 async def test_analyze_pdf_no_mocks(mock_valid_pdf):
     """✅ Ensure full execution of analyze_document with a real PDF, but mock AI."""
