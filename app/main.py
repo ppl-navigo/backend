@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import health_check, file_downloader, file_streamer, file_uploader
+from app.routers import health_check, file_downloader, file_streamer, file_uploader, analyze
 from app.routers.legal_docs_generator import deepseek, legal_docs
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -19,11 +19,12 @@ app.include_router(file_streamer.router)
 app.include_router(file_uploader.router)
 app.include_router(deepseek.router)
 app.include_router(legal_docs.router)
+app.include_router(analyze.router)
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://staging.navigoindonesia.app", " http://localhost:3000", "http://10.5.89.62:3000"],  # TODO : Remove this for nonstaging env
+    allow_origins=["https://staging.navigoindonesia.app", "http://localhost:3000", "http://10.5.89.62:3000"],  # TODO : Remove this for nonstaging env
     allow_credentials=True,
     allow_methods=["*"],  # Izinkan semua metode (GET, POST, dll.)
     allow_headers=["*"],  # Izinkan semua header
