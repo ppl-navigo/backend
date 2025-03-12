@@ -122,7 +122,6 @@ async def test_parse_risk_valid_response(sample_ai_response):
     """✅ Test valid AI response parsing."""
     with patch("app.utils.ai_client.AIClient.analyze_risk", return_value=sample_ai_response):
         response = client.post("/parse-risk/", json={"ai_response": sample_ai_response})
-        parsed_data = response.json()
         assert "detail" in response.json() or "risks" in response.json()
 
 @pytest.mark.asyncio
