@@ -51,12 +51,6 @@ async def analyze_document(file: UploadFile = File(...)):
     parsed_risks = RiskParser.parse_ai_risk_analysis(ai_response)
     return {"risks": parsed_risks}
 
-from fastapi import APIRouter, HTTPException
-from app.utils.ai_client import AIClient
-from app.utils.risk_parser import RiskParser
-
-router = APIRouter()
-
 @router.post("/parse_risk/")
 async def parse_risk_analysis(extracted_text: str):
     """Handles AI risk analysis and parsing request."""
