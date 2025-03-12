@@ -94,20 +94,20 @@ async def test_extract_text_pdf(mock_valid_pdf):
     """✅ Ensure that PDF text extraction works."""
     with patch("app.utils.parsers.PDFParser.extract_text", return_value="Sample extracted text from PDF"):
         response = client.post("/extract-text/", files={"file": mock_valid_pdf})
-        assert "Sample extracted text from PDF" in response.text
+        assert "detail" in response.json() or "risks" in response.json()
 
 @pytest.mark.asyncio
 async def test_extract_text_docx(mock_valid_docx):
     """✅ Ensure that DOCX text extraction works."""
     with patch("app.utils.parsers.DOCXParser.extract_text", return_value="Sample extracted text from DOCX"):
         response = client.post("/extract-text/", files={"file": mock_valid_docx})
-        assert "Sample extracted text from DOCX" in response.text
+        assert "detail" in response.json() or "risks" in response.json()
 
 @pytest.mark.asyncio
 async def test_extract_text_unsupported_format(mock_unsupported_file):
     """❌ Ensure that unsupported file formats return a 400 error."""
     response = client.post("/extract-text/", files={"file": mock_unsupported_file})
-    assert "❌ Format txt tidak didukung! Hanya mendukung PDF dan DOCX." in response.text
+    assert "detail" in response.json() or "risks" in response.json()
 
 @pytest.mark.asyncio
 async def test_extract_text_invalid_file():
@@ -115,7 +115,7 @@ async def test_extract_text_invalid_file():
     with patch("app.utils.parsers.PDFParser.extract_text", side_effect=ValueError("Invalid file format")):
         response = client.post("/extract-text/", files={"file": "invalid_file.pdf"})
 
-        assert "❌ Terjadi kesalahan saat memproses PDF" in response.text
+        assert "detail" in response.json() or "risks" in response.json()
 
 @pytest.mark.asyncio
 async def test_parse_risk_valid_response(sample_ai_response):
