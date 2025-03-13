@@ -8,7 +8,6 @@ from app.utils.risk_parser import RiskParser
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/extract_text/")
 async def extract_text_from_document(file: UploadFile = File(...)):
@@ -49,7 +48,11 @@ async def analyze_document(file: UploadFile = File(...)):
     ai_response = AIClient.analyze_risk(extracted_text)
 
     parsed_risks = RiskParser.parse_ai_risk_analysis(ai_response)
-    return {"risks": parsed_risks}
+    return {
+            "extracted_text": extracted_text,  # Original text extracted from the document
+            "ai_response": ai_response,  # The raw AI response for transparency
+            "risks": parsed_risks  # The parsed risks from the AI response
+        }
 
 @router.post("/parse_risk/")
 async def parse_risk_analysis(extracted_text: str):

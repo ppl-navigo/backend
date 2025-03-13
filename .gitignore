@@ -7,7 +7,7 @@ env
 coverage.xml
 .venv
 assets/
-uploads/
 key.json
 .history
 .env
+testing_api.py
