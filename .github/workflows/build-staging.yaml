@@ -29,8 +29,8 @@ jobs:
 
       - name: Setup GCP Credentials
         run: |
-          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/secrets/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/secrets/key.json" >> $GITHUB_ENV
           
       - name: Verify GCP Credentials
         run: |
