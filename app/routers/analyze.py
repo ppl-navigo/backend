@@ -8,7 +8,6 @@ from app.utils.risk_parser import RiskParser
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/extract_text/")
 async def extract_text_from_document(file: UploadFile = File(...)):
