@@ -23,6 +23,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create .env file
+        run: |
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+
+      - name: Setup GCP Credentials
+        run: |
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
+          
+      - name: Verify GCP Credentials
+        run: |
+          echo "Checking if key.json exists..."
+          ls -l $GITHUB_WORKSPACE/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS is set to: $GOOGLE_APPLICATION_CREDENTIALS"
+          
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
@@ -54,4 +69,5 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:staging
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
             docker compose up -d

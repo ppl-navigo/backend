@@ -5,3 +5,9 @@ env
 .pytest_cache
 .coverage
 coverage.xml
+.venv
+assets/
+key.json
+.history
+.env
+testing_api.py
