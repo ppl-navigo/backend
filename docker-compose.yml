@@ -1,5 +1,8 @@
+version: "3"
 services:
   web:
     image: "008009005/navigo-backend:latest"
     ports:
       - "8000:80"
+    volumes:
+      - ./uploads:/uploads
