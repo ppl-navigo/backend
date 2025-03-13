@@ -4,10 +4,13 @@ import traceback
 from fastapi import APIRouter, HTTPException
 from google.cloud import storage
 from starlette.responses import StreamingResponse
+import os
 
 router = APIRouter()
 
 BUCKET_NAME = "mou-pdf"
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "secrets/key.json"
 
 def get_bucket():
     """Returns a mockable GCS bucket instance."""
