@@ -9,7 +9,7 @@ import os
 router = APIRouter()
 BUCKET_NAME = "mou-pdf"
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "secrets/key.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key.json"
 
 def get_bucket():
     """Returns a mockable GCS bucket instance."""
