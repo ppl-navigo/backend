@@ -24,7 +24,7 @@ app.include_router(analyze.router)
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://staging.navigoindonesia.app", "http://localhost:3000", "http://10.5.89.62:3000"],  # TODO : Remove this for nonstaging env
+    allow_origins=["*"],  # TODO : Remove this for nonstaging env
     allow_credentials=True,
     allow_methods=["*"],  # Izinkan semua metode (GET, POST, dll.)
     allow_headers=["*"],  # Izinkan semua header
