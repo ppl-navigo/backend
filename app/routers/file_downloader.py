@@ -7,7 +7,6 @@ from starlette.responses import StreamingResponse
 import os
 
 router = APIRouter()
-
 BUCKET_NAME = "mou-pdf"
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "secrets/key.json"
