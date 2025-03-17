@@ -69,7 +69,7 @@ def is_valid_refresh_token(user_id: str, token: str) -> bool:
     if stored_token["token"] != token:
         return False
     
-    if stored_token["expires_at"] < datetime.now():
+    if stored_token["expires_at"] < datetime.now(timezone.utc):
         # Token expired
         revoke_refresh_token(user_id)
         return False
