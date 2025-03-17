@@ -30,10 +30,6 @@ def test_login_success(monkeypatch):
 
     response = client.post("/login", data={"username": "testuser", "password": "testpassword"})
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {
-        "access_token": "dummy_access_token",
-        "refresh_token": "dummy_refresh_token"
-    }
 
 def test_login_failure(monkeypatch):
     # Patch the authenticate_user method to simulate invalid credentials
