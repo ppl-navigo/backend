@@ -23,7 +23,7 @@ def test_create_access_token():
     assert payload["sub"] == subject
     assert payload["type"] == "access"
     # Check expiration is within acceptable range
-    exp = datetime.fromtimestamp(payload["exp"])
+    exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
     expected = datetime.now(timezone.utc) + timedelta(minutes=jwt_utils.ACCESS_TOKEN_EXPIRE_MINUTES)
     assert exp - expected < timedelta(seconds=5)
 
@@ -36,7 +36,7 @@ def test_create_refresh_token():
     assert payload["type"] == "refresh"
     # Check expiration is within acceptable range
     exp_timestamp = payload["exp"]
-    exp_datetime = datetime.fromtimestamp(exp_timestamp)
+    exp_datetime = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
     expected = datetime.now(timezone.utc) + timedelta(days=jwt_utils.REFRESH_TOKEN_EXPIRE_DAYS)
     assert exp_datetime - expected < timedelta(seconds=5)
     
