@@ -1,6 +1,6 @@
 import os
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from app.utils import jwt as jwt_utils
 
@@ -24,7 +24,7 @@ def test_create_access_token():
     assert payload["type"] == "access"
     # Check expiration is within acceptable range
     exp = datetime.fromtimestamp(payload["exp"])
-    expected = datetime.utcnow() + timedelta(minutes=jwt_utils.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expected = datetime.now(timezone.utc) + timedelta(minutes=jwt_utils.ACCESS_TOKEN_EXPIRE_MINUTES)
     assert exp - expected < timedelta(seconds=5)
 
 def test_create_refresh_token():
@@ -37,7 +37,7 @@ def test_create_refresh_token():
     # Check expiration is within acceptable range
     exp_timestamp = payload["exp"]
     exp_datetime = datetime.fromtimestamp(exp_timestamp)
-    expected = datetime.utcnow() + timedelta(days=jwt_utils.REFRESH_TOKEN_EXPIRE_DAYS)
+    expected = datetime.now(timezone.utc) + timedelta(days=jwt_utils.REFRESH_TOKEN_EXPIRE_DAYS)
     assert exp_datetime - expected < timedelta(seconds=5)
     
     # Ensure the token is stored in memory for the subject
