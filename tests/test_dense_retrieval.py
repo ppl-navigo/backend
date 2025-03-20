@@ -1,5 +1,5 @@
 import pytest
-from app.services.retrieval.DenseRetrieval import DenseRetrieval
+from app.services.retrieval.dense import DenseRetrieval
 from app.config.settings import settings
 
 # Create a fake client to avoid external calls during testing.
@@ -17,7 +17,7 @@ class DummySession:
 
 def test_init_sets_ollama_client(monkeypatch):
     # Patch the Client in SparseRetrieval to use FakeClient.
-    monkeypatch.setattr("app.services.retrieval.DenseRetrieval.Client", FakeClient)
+    monkeypatch.setattr("app.services.retrieval.dense.Client", FakeClient)
     dummy_session = DummySession()
     retriever = DenseRetrieval(dummy_session)
     
@@ -27,7 +27,7 @@ def test_init_sets_ollama_client(monkeypatch):
 
 def test_init_calls_parent(monkeypatch):
     # Patch the Client to avoid external dependency.
-    monkeypatch.setattr("app.services.retrieval.DenseRetrieval.Client", FakeClient)
+    monkeypatch.setattr("app.services.retrieval.dense.Client", FakeClient)
     dummy_session = DummySession()
     retriever = DenseRetrieval(dummy_session)
     
@@ -37,7 +37,7 @@ def test_init_calls_parent(monkeypatch):
 
 def test_retrieve_calls_ollama(monkeypatch):
     # Patch the Client to avoid external dependency.
-    monkeypatch.setattr("app.services.retrieval.DenseRetrieval.Client", FakeClient)
+    monkeypatch.setattr("app.services.retrieval.dense.Client", FakeClient)
     
     # We don't need this since we're adding exec to DummySession class
     # def fake_execute(*args, **kwargs):
