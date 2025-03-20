@@ -1,9 +1,6 @@
 import pytest
 from sqlmodel import SQLModel
 from app.commons.db.postgres import Postgres
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from pydantic import Annotated
 
 def test_create_db_and_tables_called(monkeypatch):
     call_args = []
