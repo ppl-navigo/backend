@@ -15,7 +15,7 @@ async def extract_text_from_document(file: UploadFile = File(...)):
     file_extension = file.filename.split(".")[-1].lower()
 
     # Save file temporarily
-    temp_file_path = os.path.join(UPLOAD_DIR, file.filename)
+    temp_file_path = file.filename
     with open(temp_file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
