@@ -11,5 +11,6 @@ class Settings:
     SITE_URL = os.getenv("SITE_URL", "https://yourwebsite.com")  # Optional ranking
     SITE_NAME = os.getenv("SITE_NAME", "YourApp")  # Optional ranking
     AI_OUTPUT = os.getenv("AI_OUTPUT") # temporary aja sampe API self deployment done
+    OLLAMA_URL = os.getenv("OLLAMA_URL")
 
 settings = Settings()

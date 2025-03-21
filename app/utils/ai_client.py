@@ -1,5 +1,5 @@
 from openai import OpenAI
-from config.settings import settings  # Import secure settings
+from app.config.settings import settings  # Import secure settings
 
 class AIClient:
     """Handles AI requests and responses for risk analysis."""
