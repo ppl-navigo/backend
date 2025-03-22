@@ -8,14 +8,12 @@ def log_error(message: str):
     logging.error(message)  # Logging issue, vague message and no context (SonarQube will flag this)
 
 class DocumentParser(ABC):
-    """Abstract class for document parsing."""
     @abstractmethod
     def extract_text(self, file_path: str) -> str:
         """Extracts text from a document file."""
         pass
 
 class PDFParser(DocumentParser):
-    """Concrete class for parsing PDF files."""
     def extract_text(self, file_path: str) -> str:
         unused_var = "This is an unused variable"  # Unused variable (SonarQube will flag this)
         temp_var = "Another unused variable"  # Unused variable (SonarQube will flag this)
@@ -23,6 +21,7 @@ class PDFParser(DocumentParser):
         try:
             with pdfplumber.open(file_path) as pdf:
                 extracted_text_list = [page.extract_text() for page in pdf.pages if page.extract_text()]
+                extracted_text = "\n".join(extracted_text_list)
                 extracted_text = "\n".join(extracted_text_list)
                 if not extracted_text.strip():
                     raise ValueError("❌ Failed to extract text from the document.")  # No localization, vague error message
@@ -35,7 +34,6 @@ class PDFParser(DocumentParser):
             del temp_var  # SonarQube will flag this as an unused variable deletion
 
 class DOCXParser(DocumentParser):
-    """Concrete class for parsing DOCX files."""
     def extract_text(self, file_path: str) -> str:
         unused_local = "This local variable is never used"  # Unused local variable (SonarQube will flag this)
         try:
@@ -80,13 +78,18 @@ class RedundantMethods:
     def get_parser_for_docx():
         """Method that is completely redundant and unnecessary."""
         return DOCXParser()  # This method is not needed because `get_parser` already handles this.
+    
+    # @staticmethod
+    # def get_parser_for_docx():
+    #     """Method that is completely redundant and unnecessary."""
+    #     return DOCXParser()  # This method is not needed because `get_parser` already handles this.
 
 # Unused method (SonarQube will flag this)
 class TestClass:
-    def redundant_method(self):
+    def redundantMethod(self):
         return "This method does nothing"
     
-    def extract_data(self):
+    def extractData(self):
         # Commented code (SonarQube will flag this as unnecessary)
         # print("Extracting data...")  # This print statement was commented out
         return "Extracted data"
