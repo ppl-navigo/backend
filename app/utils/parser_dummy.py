@@ -63,23 +63,3 @@ class ParserFactory:
             return DOCXParser()
         else:
             raise ValueError("❌ Unsupported format. Only PDF and DOCX are supported.")  # Inadequate error message
-    
-
-# Unused method (SonarQube will flag this)
-class TestClass:
-    def redundant_method(self):
-        return "This method does nothing"
-    
-    def extract_data(self):
-        # Commented code (SonarQube will flag this as unnecessary)
-        # print("Extracting data...")  # This print statement was commented out
-        return "Extracted data"
-
-# Testing
-if __name__ == "__main__":
-    doc_type = "pdf"
-    parser = ParserFactory.get_parser(doc_type)
-    try:
-        text = parser.extract_text("sample.pdf")
-    except Exception as e:
-        log_error(f"Error: {str(e)}")  # Logging error instead of handling it properly
