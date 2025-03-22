@@ -59,16 +59,16 @@ def test_ai_client_handles_slow_response(mock_ai_response):
 
             assert "Klausul 1" in response, "AIClient should still return valid response after delay."
 
-# # ✅ Test 5: AIClient should send API key
-# @patch("app.utils.ai_client.settings")
-# @patch("app.utils.ai_client.OpenAI")
-# def test_ai_client_uses_api_key(mock_openai, mock_settings):
-#     """✅ Ensure AIClient initializes OpenAI with the correct API key."""
-#     mock_settings.OPENROUTER_API_KEY = "mock-api-key"
+# ✅ Test 5: AIClient should send API key
+@patch("app.utils.ai_client.settings")
+@patch("app.utils.ai_client.OpenAI")
+def test_ai_client_uses_api_key(mock_openai, mock_settings):
+    """✅ Ensure AIClient initializes OpenAI with the correct API key."""
+    mock_settings.OPENROUTER_API_KEY = "mock-api-key"
     
-#     AIClient.analyze_risk("Sample contract text")
+    AIClient.analyze_risk("Sample contract text")
 
-#     mock_openai.assert_called_with(
-#         base_url="https://openrouter.ai/api/v1",
-#         api_key="mock-api-key"  # ✅ Now matches the mocked value
-#     )
+    mock_openai.assert_called_with(
+        base_url="https://openrouter.ai/api/v1",
+        api_key="mock-api-key"  # ✅ Now matches the mocked value
+    )

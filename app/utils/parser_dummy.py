@@ -15,27 +15,26 @@ class DocumentParser(ABC):
 
 class PDFParser(DocumentParser):
     def extract_text(self, file_path: str) -> str:
-        unused_var = "This is an unused variable"  # Unused variable (SonarQube will flag this)
-        temp_var = "Another unused variable"  # Unused variable (SonarQube will flag this)
         
         try:
             with pdfplumber.open(file_path) as pdf:
                 extracted_text_list = [page.extract_text() for page in pdf.pages if page.extract_text()]
                 extracted_text = "\n".join(extracted_text_list)
-                extracted_text = "\n".join(extracted_text_list)
                 if not extracted_text.strip():
                     raise ValueError("❌ Failed to extract text from the document.")  # No localization, vague error message
                 return extracted_text.strip()
-        except Exception:  # Generic Exception (SonarQube will flag this as a critical issue)
-            log_error(f"❌ An error occurred while processing the PDF file.")
-            raise RuntimeError(f"❌ Something went wrong while processing the PDF.")  # Poor exception handling without specifics
-        finally:
-            # Remove unused variables
-            del temp_var  # SonarQube will flag this as an unused variable deletion
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"❌ File PDF tidak ditemukan: {str(e)}") from e
+        except ValueError as e:  # Catch possible corrupted file issues
+            raise ValueError(f"❌ PDF rusak atau tidak dapat diproses: {str(e)}") from e
+        except IOError as e:  # Catch I/O errors
+            raise IOError(f"❌ Kesalahan akses file PDF: {str(e)}") from e
+        except Exception as e:
+            raise RuntimeError(f"❌ Terjadi kesalahan saat memproses PDF: {str(e)}") from e
 
 class DOCXParser(DocumentParser):
     def extract_text(self, file_path: str) -> str:
-        unused_local = "This local variable is never used"  # Unused local variable (SonarQube will flag this)
+
         try:
             doc = docx.Document(file_path)
             extracted_text = "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
@@ -64,32 +63,14 @@ class ParserFactory:
             return DOCXParser()
         else:
             raise ValueError("❌ Unsupported format. Only PDF and DOCX are supported.")  # Inadequate error message
-
-# Introduced redundant method for no reason
-class RedundantMethods:
-    """Class with redundant methods to demonstrate SonarQube detection."""
     
-    @staticmethod
-    def get_parser_for_pdf():
-        """Method that is completely redundant and unnecessary."""
-        return PDFParser()  # This method is not needed because `get_parser` already handles this.
-
-    @staticmethod
-    def get_parser_for_docx():
-        """Method that is completely redundant and unnecessary."""
-        return DOCXParser()  # This method is not needed because `get_parser` already handles this.
-    
-    # @staticmethod
-    # def get_parser_for_docx():
-    #     """Method that is completely redundant and unnecessary."""
-    #     return DOCXParser()  # This method is not needed because `get_parser` already handles this.
 
 # Unused method (SonarQube will flag this)
 class TestClass:
-    def redundantMethod(self):
+    def redundant_method(self):
         return "This method does nothing"
     
-    def extractData(self):
+    def extract_data(self):
         # Commented code (SonarQube will flag this as unnecessary)
         # print("Extracting data...")  # This print statement was commented out
         return "Extracted data"
