@@ -9,7 +9,7 @@ class AIClient:
         """Sends extracted text to AI for risk analysis using Qwen on OpenRouter."""
         client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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",  # 🔐 Use secure API key
+            api_key=settings.OPENROUTER_API_KEY,  # 🔐 Use secure API key
         )
 
         # Combine extracted text with the stored risk analysis prompt
