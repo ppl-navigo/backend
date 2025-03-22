@@ -11,3 +11,4 @@ uploads/
 key.json
 .history
 .env
+testing_api.py
