@@ -2,7 +2,6 @@ from app.services.retrieval.retrieval_strategy import RetrievalStrategy
 from app.services.retrieval.dense import DenseRetrieval
 from app.services.retrieval.sparse import SparseRetrieval
 from sqlmodel import Session
-from typing import Annotated
 
 class RetrievalService:
     def __init__(self, strategy: RetrievalStrategy):
@@ -26,8 +25,10 @@ class RetrievalServiceFactory:
     def create(self, db: Session) -> RetrievalStrategy:
         strategy_class = self.strategies[self.method]
         return strategy_class(db)
-    
-def get_retrieval_strategy(method: str):    
-    yield RetrievalService(RetrievalServiceFactory(method).create())
 
-RetrievalDep = Annotated[RetrievalService, get_retrieval_strategy]
+# db = Postgres(settings.DB_URL)
+# DatabaseDep = Annotated[Session, Depends(db.get_session)]
+# def get_retrieval_strategy(db: Annotated[Session, DatabaseDep], method: str):    
+#     yield RetrievalService(RetrievalServiceFactory(method).create(db))
+
+# RetrievalDep = Annotated[RetrievalService, Depends(get_retrieval_strategy)]
