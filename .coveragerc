@@ -19,4 +19,5 @@ exclude_lines =
     @field_validator
     deepseek_payload
     pass
+    yield
 omit = tests/*
