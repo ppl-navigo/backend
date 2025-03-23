@@ -2,6 +2,9 @@ import pytest
 from unittest.mock import Mock
 from app.services.retrieval.retrieval_service import RetrievalService, RetrievalServiceFactory
 from app.services.retrieval.retrieval_strategy import RetrievalStrategy
+from app.services.retrieval.dense import DenseRetrieval
+from app.services.retrieval.sparse import SparseRetrieval
+from sqlmodel import Session
 
 class TestRetrievalService:
     def test_retrieve_calls_strategy_retrieve(self):
@@ -36,3 +39,27 @@ class TestRetrievalServiceFactory:
         # Act/Assert
         with pytest.raises(ValueError, match="Invalid retrieval method"):
             RetrievalServiceFactory("invalid_method")
+
+    def test_create_returns_correct_strategy(self):
+        # Arrange
+        factory = RetrievalServiceFactory("dense")
+        mock_db = Mock(spec=Session)
+        
+        # Act
+        strategy = factory.create(mock_db)
+        
+        # Assert
+        assert isinstance(strategy, DenseRetrieval)
+        
+    def test_create_passes_db_to_strategy(self):
+        # Arrange
+        factory = RetrievalServiceFactory("sparse")
+        mock_db = Mock(spec=Session)
+        
+        # Act
+        strategy = factory.create(mock_db)
+        
+        # Assert
+        assert isinstance(strategy, SparseRetrieval)
+        # Verify the db was passed to the strategy constructor
+        assert strategy.db_session == mock_db
