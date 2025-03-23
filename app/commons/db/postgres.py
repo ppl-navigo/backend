@@ -5,6 +5,8 @@ class Postgres:
     init: bool = False
     
     def __init__(self, url: str):
+        if url is None:
+            url = "sqlite:///:memory:"
         self.engine = create_engine(url)
         self.init = True
         self.__create_db_and_tables()
