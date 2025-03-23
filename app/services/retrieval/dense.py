@@ -1,6 +1,4 @@
 from app.services.retrieval.retrieval_strategy import RetrievalStrategy
-# from app.model.chatbot.legal_document import LegalDocumentChunk, LegalDocument
-# from sqlalchemy.sql import func
 from sqlmodel import Session
 from app.config.settings import settings
 from sqlmodel import text
