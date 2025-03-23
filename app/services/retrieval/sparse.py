@@ -1,8 +1,5 @@
 from app.services.retrieval.retrieval_strategy import RetrievalStrategy
-from app.model.chatbot.legal_document import LegalDocumentPage, LegalDocument
-from sqlmodel import Session
-from sqlalchemy.sql import func, text
-from sqlmodel import select
+from sqlmodel import Session, text
 
 class SparseRetrieval(RetrievalStrategy):
     def __init__(self, db_session: Session):
@@ -17,21 +14,19 @@ class SparseRetrieval(RetrievalStrategy):
             return []
             
         # Use PostgreSQL's ts_rank to score documents against the query using the indexed tsvector
-        statement = (
-            select(
-                LegalDocumentPage.page_number,
-                LegalDocumentPage.document_id,
-                func.ts_rank_cd(
-                    LegalDocumentPage.full_text_search, 
-                    func.to_tsquery('english', clean_query)
-                ).label("similarity")
-            )
-            .join(LegalDocument, LegalDocument.id == LegalDocumentPage.document_id)
-            .where(
-                LegalDocumentPage.full_text_search.op('@@')(func.to_tsquery('indonesian', clean_query))
-            )
-            .group_by(LegalDocumentPage.page_number, LegalDocumentPage.document_id, "similarity")
-            .order_by(text("similarity DESC"))
-            .limit(20)
-        )
-        return self.db_session.exec(statement).all()
+        statement = text("""
+            SELECT DISTINCT document_id, page_number, MAX(ts_rank_cd(full_text_search, to_tsquery(:lang, :ts_query))) AS rank
+            FROM legal_document_pages
+            WHERE full_text_search @@ to_tsquery(:lang, :ts_query)
+            GROUP BY document_id, page_number
+            ORDER BY rank DESC
+            LIMIT 20;
+        """)
+
+        res = self.db_session.exec(statement, params={
+            "lang": "indonesian",
+            "ts_query": clean_query
+        }).all()
+
+        return [{"document_id": r[0], "page_number": r[1]} for r in res]
+

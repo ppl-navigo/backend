@@ -1,9 +1,9 @@
 from app.services.retrieval.retrieval_strategy import RetrievalStrategy
-from app.model.chatbot.legal_document import LegalDocumentChunk, LegalDocument
+# from app.model.chatbot.legal_document import LegalDocumentChunk, LegalDocument
+# from sqlalchemy.sql import func
 from sqlmodel import Session
-from sqlalchemy.sql import func
 from app.config.settings import settings
-from sqlmodel import select
+from sqlmodel import text
 from ollama import Client
 
 class DenseRetrieval(RetrievalStrategy):
@@ -12,24 +12,25 @@ class DenseRetrieval(RetrievalStrategy):
         super().__init__(db_session)
 
     def __embed_query(self, query: str) -> list[int]:
-        return self.ollama_client.embed(model='bge-m3', input=query)[0]
+        return self.ollama_client.embed(model='bge-m3', input=query).embeddings[0]
 
     def retrieve(self, query: str):
         doc_embedding = self.__embed_query(query)
-        similarity_expr = 1 - (LegalDocumentChunk.embedding.op('<=>')(doc_embedding))
         statement = (
-            select(
-                LegalDocumentChunk.page_number,
-                LegalDocumentChunk.legal_document_id,
-                func.max(similarity_expr).label("similarity")
-            )
-            .join(LegalDocument, LegalDocument.id == LegalDocumentChunk.legal_document_id)
-            .where(
-                LegalDocumentChunk.embedding.is_not(None),
-                similarity_expr > 0.5
-            )
-            .group_by(LegalDocumentChunk.page_number, LegalDocumentChunk.legal_document_id)
-            .order_by(func.max(similarity_expr).desc())
-            .limit(20)
+            text("""
+            SELECT chunk.page_number, chunk.legal_document_id,
+            MAX((1 - (chunk.embedding <=> CAST(:query_embedding AS vector)))) AS similarity
+            FROM legal_document_chunks AS chunk
+            JOIN legal_documents AS doc ON doc.id = chunk.legal_document_id
+            WHERE chunk.embedding IS NOT NULL AND (1 - (chunk.embedding <=> CAST(:query_embedding AS vector))) > 0.5
+            GROUP BY chunk.page_number, chunk.legal_document_id
+            ORDER BY similarity DESC
+            LIMIT 20;
+            """)
         )
-        return self.db_session.exec(statement).all()
+        res = self.db_session.exec(statement, params={
+            "query_embedding": doc_embedding,
+        }).all()
+
+        return [{"document_id": r[1], "page_number": r[0]} for r in res]
+        
