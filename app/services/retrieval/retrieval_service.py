@@ -25,10 +25,3 @@ class RetrievalServiceFactory:
     def create(self, db: Session) -> RetrievalStrategy:
         strategy_class = self.strategies[self.method]
         return strategy_class(db)
-
-# db = Postgres(settings.DB_URL)
-# DatabaseDep = Annotated[Session, Depends(db.get_session)]
-# def get_retrieval_strategy(db: Annotated[Session, DatabaseDep], method: str):    
-#     yield RetrievalService(RetrievalServiceFactory(method).create(db))
-
-# RetrievalDep = Annotated[RetrievalService, Depends(get_retrieval_strategy)]
