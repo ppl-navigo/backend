@@ -18,3 +18,5 @@ uvicorn
 sqlmodel
 pgvector
 psycopg2-binary
+prometheus-fastapi-instrumentator
+pygelf

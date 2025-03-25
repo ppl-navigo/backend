@@ -16,8 +16,13 @@ exclude_lines =
     return
     def fetch_deepseek_response
     def deepseek_stream_response
+    instrumentator.expose(app)*
     @field_validator
     deepseek_payload
     pass
     yield
-omit = tests/*
+    logger.*
+    response = await call_next(request)*
+omit = 
+    tests/*
+    app/config/graylog.py
