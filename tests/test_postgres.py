@@ -2,6 +2,14 @@ import pytest
 from sqlmodel import SQLModel, Session
 from app.commons.db.postgres import Postgres
 
+def test_default_url():
+    # Test that when url is None, it uses the default memory SQLite URL
+    pg = Postgres(None)
+    
+    # Verify the engine is created with the default URL
+    assert 'sqlite:///:memory:' in str(pg.engine.url)
+    assert pg.init is True
+
 def test_create_db_and_tables_called(monkeypatch):
     call_args = []
 

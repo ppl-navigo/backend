@@ -12,7 +12,6 @@ class Postgres:
         self.__create_db_and_tables()
 
     def __create_db_and_tables(self):
-        print("Creating database and tables")
         SQLModel.metadata.create_all(self.engine)
 
     def get_session(self):
