@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.routers import health_check, file_downloader, file_streamer, file_uploader, analyze
 from app.routers.retrieval import search
-from app.routers.legal_docs_generator import deepseek, legal_docs
+from app.routers.legal_docs_generator import deepseek, legal_docs, databases
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -22,6 +22,7 @@ app.include_router(deepseek.router)
 app.include_router(legal_docs.router)
 app.include_router(analyze.router)
 app.include_router(search.router)
+app.include_router(databases.router)
 
 # Add CORS middleware
 app.add_middleware(
