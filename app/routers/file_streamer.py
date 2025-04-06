@@ -24,7 +24,7 @@ async def stream_document(filename: str):
     # Daftar semua blob di bucket -> cek apakah file terdaftar
     blobs = list(bucket.list_blobs())
     available_files = [blob.name for blob in blobs]
-    print("📌 Available files in GCS:", available_files)
+    # print("📌 Available files in GCS:", available_files)
 
     if gcs_file_path not in available_files:
         print(f"❌ File {gcs_file_path} NOT FOUND in GCS")
