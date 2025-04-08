@@ -67,6 +67,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            docker rmi $(docker images -a)
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/navigo-backend:latest
             docker compose up -d
