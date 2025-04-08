@@ -21,12 +21,15 @@ async def extract_text_from_document(file: UploadFile = File(...)):
 
     # Extract text
     parser = ParserFactory.get_parser(file_extension)
-    extracted_text = parser.extract_text(temp_file_path)
+    # extracted_text = parser.extract_text(temp_file_path)
+    pages_text = parser.extract_text(temp_file_path)
 
     # Cleanup temp file
     os.remove(temp_file_path)
 
-    return {"extracted_text": extracted_text}
+    # return {"extracted_text": extracted_text}
+    print(pages_text)
+    return { "pages_text": pages_text }
 
 @router.post("/analyze/")
 async def analyze_document(file: UploadFile = File(...)):
@@ -53,15 +56,3 @@ async def analyze_document(file: UploadFile = File(...)):
             "ai_response": ai_response,  # The raw AI response for transparency
             "risks": parsed_risks  # The parsed risks from the AI response
         }
-
-@router.post("/parse_risk/")
-async def parse_risk_analysis(extracted_text: str):
-    """Handles AI risk analysis and parsing request."""
-    
-    # Perform AI-based risk analysis
-    ai_response = AIClient.analyze_risk(extracted_text)
-
-    # Parse AI response
-    parsed_risks = RiskParser.parse_ai_risk_analysis(ai_response)
-
-    return {"risks": parsed_risks}

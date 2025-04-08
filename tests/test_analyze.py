@@ -147,3 +147,25 @@ async def test_parse_risk_invalid_format():
     with patch("app.utils.ai_client.AIClient.analyze_risk", return_value=ai_response):
         response = client.post("/parse-risk/", json={"ai_response": ai_response})
         assert "detail" in response.json() or "risks" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_direct_call_extract_text_from_document():
+    from app.routers.analyze import extract_text_from_document
+    """🔥 Directly call extract_text_from_document with a real PDF file."""
+    # Create an in-memory PDF using PyMuPDF
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((100, 100), "This is a test PDF for extraction.")
+    pdf_bytes = doc.write()
+    doc.close()
+
+    fake_file = UploadFile(filename="sample_test.pdf", file=io.BytesIO(pdf_bytes))
+
+    # Call the endpoint function directly
+    response = await extract_text_from_document(fake_file)
+
+    # Assertions
+    assert "pages_text" in response
+    assert isinstance(response["pages_text"], list)
+    assert any("test PDF" in page for page in response["pages_text"])

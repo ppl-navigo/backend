@@ -61,25 +61,20 @@ def test_extract_text_pdf_with_text(mock_pdf_with_text):
     with patch("pdfplumber.open", return_value=mock_pdf_with_text):
         parser = PDFParser()
         extracted_text = parser.extract_text("dummy.pdf")
-        assert extracted_text == "Sample extracted text from PDF", f"Unexpected output: {extracted_text}"
+        assert extracted_text == ["Sample extracted text from PDF"], f"Unexpected output: {extracted_text}"
 
 def test_extract_text_pdf_no_text(mock_pdf_no_text):
-    """✅ Test PDF with no extractable text should raise ValueError."""
     with patch("pdfplumber.open", return_value=mock_pdf_no_text):
         parser = PDFParser()
-        
-        with pytest.raises(ValueError) as exc_info:
-            parser.extract_text("dummy.pdf")
-
-        assert "❌ Failed to extract text from the document." in str(exc_info.value)
+        extracted_text = parser.extract_text("dummy.pdf")
+        assert extracted_text == [""]
 
 def test_extract_text_pdf_multi_page(mock_pdf_multi_page):
     """✅ Test PDF with multiple pages."""
     with patch("pdfplumber.open", return_value=mock_pdf_multi_page):
         parser = PDFParser()
         extracted_text = parser.extract_text("dummy.pdf")
-        expected_text = "Page 1 content\nPage 2 content"
-        assert extracted_text == expected_text, f"Unexpected output: {extracted_text}"
+        assert extracted_text == ["Page 1 content", "Page 2 content"], f"Unexpected output: {extracted_text}"
 
 # ==========================
 # Tests for DOCX Parsing

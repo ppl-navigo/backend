@@ -11,14 +11,11 @@ class DocumentParser(ABC):
 
 class PDFParser(DocumentParser):
     """Concrete class for parsing PDF files."""
-    def extract_text(self, file_path: str) -> str:
+    def extract_text(self, file_path: str):
         try:
             with pdfplumber.open(file_path) as pdf:
-                extracted_text_list = [page.extract_text() for page in pdf.pages if page.extract_text()]
-                extracted_text = "\n".join(extracted_text_list)
-                if not extracted_text.strip():
-                    raise ValueError("❌ Failed to extract text from the document.")
-                return extracted_text.strip()
+                page_texts = [page.extract_text() or "" for page in pdf.pages]
+                return page_texts
         except FileNotFoundError as e:
             raise FileNotFoundError(f"❌ File PDF tidak ditemukan: {str(e)}") from e
         except ValueError as e:  # Catch possible corrupted file issues
