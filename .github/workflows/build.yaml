@@ -57,9 +57,14 @@ jobs:
       - name: Releasing New Version
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }}
+          proxy_username: ${{ secrets.SSH_PROXY_USERNAME }}
+          proxy_passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          proxy_host: ${{ secrets.SSH_PROXY_HOST }}
+          proxy_port: ${{ secrets.SSH_PROXY_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          proxy_key: ${{ secrets.SSH_PROXY_KEY }}
+          host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

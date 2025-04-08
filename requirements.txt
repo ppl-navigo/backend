@@ -15,3 +15,8 @@ pytest-asyncio
 ollama>=0.4.7
 google-genai>=1.4.0
 uvicorn
+sqlmodel
+pgvector
+psycopg2-binary
+prometheus-fastapi-instrumentator
+pygelf
