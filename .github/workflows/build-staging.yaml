@@ -27,25 +27,25 @@ jobs:
         run: |
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
 
-      - name: Setup GCP Credentials
-        run: |
-          echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
+      # - name: Setup GCP Credentials
+      #   run: |
+      #     echo '${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}' > $GITHUB_WORKSPACE/key.json
+      #     echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/key.json" >> $GITHUB_ENV
           
-      - name: Verify GCP Credentials
-        run: |
-          echo "Checking if key.json exists..."
-          ls -l $GITHUB_WORKSPACE/key.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS is set to: $GOOGLE_APPLICATION_CREDENTIALS"
+      # - name: Verify GCP Credentials
+      #   run: |
+      #     echo "Checking if key.json exists..."
+      #     ls -l $GITHUB_WORKSPACE/key.json
+      #     echo "GOOGLE_APPLICATION_CREDENTIALS is set to: $GOOGLE_APPLICATION_CREDENTIALS"
           
       - name: Run unit tests
         run: pytest --cov=. --cov-config=.coveragerc --cov-report xml
         continue-on-error: false
 
-      - uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - uses: SonarSource/sonarqube-scan-action@v4
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1

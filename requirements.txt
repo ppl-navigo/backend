@@ -3,7 +3,6 @@ pydantic>=2.7.0,<3.0.0
 pytest-cov
 pytest
 pdfplumber==0.11.5
-pymupdf
 google-cloud-storage
 python-multipart
 python-docx==1.1.2
@@ -16,7 +15,6 @@ ollama>=0.4.7
 google-genai>=1.4.0
 uvicorn
 sqlmodel
-pgvector
 psycopg2-binary
 prometheus-fastapi-instrumentator
 pygelf
