@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import health_check, file_downloader, file_streamer, file_uploader, analyze
+from app.routers import health_check, analyze
 from app.routers.retrieval import search
 from app.routers.metrics import autometrics
 from app.routers.legal_docs_generator import deepseek, legal_docs
@@ -42,9 +42,6 @@ instrumentator.expose(app)
 
 # Include routers
 app.include_router(health_check.router)
-app.include_router(file_downloader.router)
-app.include_router(file_streamer.router)
-app.include_router(file_uploader.router)
 app.include_router(deepseek.router)
 app.include_router(legal_docs.router)
 app.include_router(analyze.router)
