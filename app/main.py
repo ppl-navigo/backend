@@ -58,6 +58,7 @@ app.add_middleware(
 )
 
 
+print("Started")
 @app.get("/")
 async def root():
     return {"message": "MoU Analyzer is running"}
