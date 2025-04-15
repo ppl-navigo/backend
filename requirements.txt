@@ -18,3 +18,4 @@ uvicorn
 sqlmodel
 pgvector
 psycopg2-binary
+fitz
